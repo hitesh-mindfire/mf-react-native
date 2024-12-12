@@ -48,7 +48,7 @@ const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Header title="Hello" subtitle="Sign in to your account" />
+        <Header title="Welcome Back!" subtitle="Sign in to continue" />
       </View>
       <ScrollView contentContainerStyle={styles.form}>
         <InputField
@@ -75,7 +75,7 @@ const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
         <Button title="Sign In" onPress={handleSignIn} />
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
           <Text style={styles.createAccount}>
-            Don’t have an account? <Text style={styles.link}>Create</Text>
+            Don’t have an account? <Text style={styles.link}>Create one</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -86,12 +86,16 @@ const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f4f4f8",
   },
   header: {
-    backgroundColor: "#007bff",
-    paddingVertical: 60,
+    backgroundColor: "#4a90e2",
+    paddingVertical: 80,
     justifyContent: "center",
     alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
   },
   form: {
     flexGrow: 1,
@@ -100,8 +104,10 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     textAlign: "right",
-    color: "#007bff",
-    marginVertical: 5,
+    color: "#4a90e2",
+    fontSize: 14,
+    fontWeight: "500",
+    marginVertical: 10,
   },
   bottomContainer: {
     paddingHorizontal: 20,
@@ -110,11 +116,13 @@ const styles = StyleSheet.create({
   },
   createAccount: {
     textAlign: "center",
-    color: "#000000",
+    color: "#4a4a4a",
     marginTop: 10,
+    fontSize: 14,
   },
   link: {
-    color: "#007bff",
+    color: "#4a90e2",
+    fontWeight: "600",
   },
 });
 

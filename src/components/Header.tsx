@@ -17,20 +17,21 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 30,
-    marginTop: 30,
+    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
   },
   title: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: "bold",
     color: "white",
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
     color: "white",
-    marginTop: 20,
+    marginTop: 10,
+    textAlign: "center",
   },
 });
 

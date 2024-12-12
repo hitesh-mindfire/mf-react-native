@@ -16,18 +16,8 @@ import {
   faEnvelope,
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  RootStackParamList,
-  StackScreenProps,
-} from "../../navigation/AppNavigator";
-import { Checkbox } from "expo-checkbox";
-
-type SignupScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "Login"
->;
+import { StackScreenProps } from "../../navigation/AppNavigator";
+import Checkbox from "expo-checkbox";
 
 const SignupScreen: FC<StackScreenProps<"Signup">> = ({ navigation }) => {
   const [email, setEmail] = useState<string>("");
@@ -86,7 +76,7 @@ const SignupScreen: FC<StackScreenProps<"Signup">> = ({ navigation }) => {
           onChangeText={setPassword}
           value={password}
           onIconPress={() => {
-            setShowPassword((show: boolean) => !show);
+            setShowPassword((show) => !show);
           }}
           icon={showPassword ? faEye : faEyeSlash}
         />
@@ -96,7 +86,7 @@ const SignupScreen: FC<StackScreenProps<"Signup">> = ({ navigation }) => {
           onChangeText={setConfirmPassword}
           value={confirmPassword}
           onIconPress={() => {
-            setShowConfirmPassword((show: boolean) => !show);
+            setShowConfirmPassword((show) => !show);
           }}
           icon={showConfirmPassword ? faEye : faEyeSlash}
         />
@@ -127,12 +117,16 @@ const SignupScreen: FC<StackScreenProps<"Signup">> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f4f4f8",
   },
   header: {
-    backgroundColor: "#007bff",
-    paddingVertical: 60,
+    backgroundColor: "#4a90e2",
+    paddingVertical: 80,
     justifyContent: "center",
     alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 5,
   },
   form: {
     flexGrow: 1,
@@ -147,10 +141,10 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     marginLeft: 10,
-    color: "#000000",
+    color: "#4a4a4a",
   },
   link: {
-    color: "#007bff",
+    color: "#4a90e2",
     textDecorationLine: "underline",
   },
   bottomContainer: {
@@ -160,11 +154,12 @@ const styles = StyleSheet.create({
   },
   login: {
     textAlign: "center",
-    color: "#000000",
+    color: "#4a4a4a",
     marginTop: 15,
   },
   loginLink: {
-    color: "#007bff",
+    color: "#4a90e2",
+    fontWeight: "600",
   },
 });
 
