@@ -76,7 +76,7 @@ const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
         <Button title="Sign In" onPress={handleSignIn} />
         <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
           <Text style={styles.createAccount}>
-            Don’t have an account? <Text style={styles.link}>Create one</Text>
+            Don’t have an account? <Text style={styles.link}>Create</Text>
           </Text>
         </TouchableOpacity>
       </View>
