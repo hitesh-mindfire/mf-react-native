@@ -55,6 +55,7 @@ const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
           placeholder="Email"
           icon={faEnvelope}
           onChangeText={setEmail}
+          inputMode="email"
           value={email}
         />
         <InputField

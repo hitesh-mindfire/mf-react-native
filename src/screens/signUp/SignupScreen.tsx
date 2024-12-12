@@ -69,6 +69,7 @@ const SignupScreen: FC<StackScreenProps<"Signup">> = ({ navigation }) => {
           icon={faEnvelope}
           onChangeText={setEmail}
           value={email}
+          inputMode="email"
         />
         <InputField
           placeholder="Password"

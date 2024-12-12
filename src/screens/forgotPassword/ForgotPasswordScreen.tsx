@@ -52,6 +52,7 @@ const ForgotPasswordScreen: FC<StackScreenProps<"ForgotPassword">> = ({
           icon={faEnvelope}
           onChangeText={setEmail}
           value={email}
+          inputMode="email"
         />
       </ScrollView>
       <View style={styles.bottomContainer}>
