@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,7 +21,7 @@ import * as Yup from "yup";
 import Checkbox from "expo-checkbox";
 
 const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),

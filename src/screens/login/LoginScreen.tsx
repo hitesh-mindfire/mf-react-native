@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -20,7 +20,7 @@ import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
