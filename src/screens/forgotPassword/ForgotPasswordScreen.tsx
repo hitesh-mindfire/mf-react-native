@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   bottomContainer: {
+    marginTop: "auto",
     paddingHorizontal: 20,
     paddingBottom: 30,
     justifyContent: "center",
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
   backToLogin: {
     textAlign: "center",
     color: "#4a4a4a",
-    marginTop: 15,
+    marginTop: 10,
   },
 });
 

@@ -18,10 +18,16 @@ import {
 import { StackScreenProps } from "../../navigation/AppNavigator";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/src/store/Store";
+import { login, setLoading } from "@/src/store";
 
 const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
+  );
   const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
@@ -33,16 +39,21 @@ const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
     values: { email: string; password: string },
     { resetForm }: FormikHelpers<{ email: string; password: string }>
   ) => {
-    Alert.alert(
-      "Login Successful",
-      `Welcome!\nEmail: ${values.email}\nPassword: ${values.password}`,
-      [
-        {
-          text: "OK",
-          onPress: () => resetForm(),
-        },
-      ]
-    );
+    dispatch(setLoading(true));
+    setTimeout(() => {
+      dispatch(
+        login({
+          email: values.email,
+          name: "Hitesh Saini",
+        })
+      );
+      Alert.alert(
+        "Login Successful",
+        `Welcome!\nEmail: ${values.email}\nPassword: ${values.password}`
+      );
+      dispatch(setLoading(false));
+      resetForm();
+    }, 500);
   };
 
   return (
