@@ -18,7 +18,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { StackScreenProps } from "../../navigation/AppNavigator";
 import { Formik, FormikHelpers } from "formik";
-import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/src/store/Store";
 import { login, setLoading } from "@/src/store";
