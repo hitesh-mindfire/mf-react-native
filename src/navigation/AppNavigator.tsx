@@ -10,7 +10,7 @@ import ForgotPasswordScreen from "../screens/forgotPassword/ForgotPasswordScreen
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
-  ForgotPassword: undefined;
+  ForgotPassword: { email: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

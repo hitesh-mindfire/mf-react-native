@@ -17,24 +17,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { StackScreenProps } from "../../navigation/AppNavigator";
 import { Formik, FormikHelpers } from "formik";
-import * as Yup from "yup";
 import Checkbox from "expo-checkbox";
+import { SignupSchema } from "@/src/validation/SignupSchema";
+import { colors } from "@/src/theme";
 
 const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
-
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Confirm Password is required"),
-    agreeToTerms: Yup.boolean()
-      .oneOf([true], "You must accept the terms and conditions")
-      .required(),
-  });
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignUp = (
     values: {
@@ -79,9 +68,8 @@ const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
             confirmPassword: "",
             agreeToTerms: false,
           }}
-          validationSchema={validationSchema}
+          validationSchema={SignupSchema}
           onSubmit={(values, actions) => handleSignUp(values, actions)}
-          validateOnMount
         >
           {({
             handleChange,
@@ -118,12 +106,12 @@ const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
               />
               <InputField
                 placeholder="Confirm Password"
-                secureTextEntry={!showPassword}
+                secureTextEntry={!showConfirmPassword}
                 onChangeText={handleChange("confirmPassword")}
                 onBlur={handleBlur("confirmPassword")}
                 value={values.confirmPassword}
-                onIconPress={() => setShowPassword(!showPassword)}
-                icon={showPassword ? faEye : faEyeSlash}
+                onIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                icon={showConfirmPassword ? faEye : faEyeSlash}
                 errorMessage={
                   touched.confirmPassword && errors.confirmPassword
                     ? errors.confirmPassword
@@ -136,7 +124,7 @@ const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
                   onValueChange={(value) =>
                     setFieldValue("agreeToTerms", value)
                   }
-                  color={values.agreeToTerms ? "#007bff" : "#a9a9a9"}
+                  color={values.agreeToTerms ? colors.yankeesBlue : colors.gray}
                 />
                 <Text style={styles.checkboxLabel}>
                   I agree to the terms and conditions
@@ -166,10 +154,10 @@ const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f8",
+    backgroundColor: colors.platinum,
   },
   header: {
-    backgroundColor: "#4a90e2",
+    backgroundColor: colors.yankeesBlue,
     paddingVertical: 80,
     justifyContent: "center",
     alignItems: "center",
@@ -186,10 +174,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
+    marginLeft: 5,
   },
   checkboxLabel: {
     marginLeft: 10,
     fontSize: 14,
+    color: colors.darkCharcole,
   },
   bottomContainer: {
     marginTop: "auto",
@@ -198,12 +188,12 @@ const styles = StyleSheet.create({
   },
   createAccount: {
     textAlign: "center",
-    color: "#4a4a4a",
+    color: colors.darkCharcole,
     marginTop: 10,
     fontSize: 14,
   },
   link: {
-    color: "#4a90e2",
+    color: colors.yankeesBlue,
     fontWeight: "600",
   },
 });

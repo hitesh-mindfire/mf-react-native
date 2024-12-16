@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { colors } from "../theme";
 
 interface ButtonProps {
   title: string;
@@ -27,7 +28,7 @@ const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#4a90e2",
+    backgroundColor: colors.yankeesBlue,
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -35,16 +36,16 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   text: {
-    color: "white",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "600",
   },
   disabled: {
-    backgroundColor: "#b0b0b0",
+    backgroundColor: colors.lavendarGray,
     elevation: 0,
   },
   disabledText: {
-    color: "#7f7f7f",
+    color: colors.gray,
   },
 });
 

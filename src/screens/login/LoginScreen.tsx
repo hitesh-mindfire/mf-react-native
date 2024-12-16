@@ -10,6 +10,7 @@ import {
 import Header from "../../components/Header";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
+import { colors } from "@/src/theme";
 import {
   faEyeSlash,
   faEye,
@@ -21,6 +22,7 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/src/store/Store";
 import { login, setLoading } from "@/src/store";
+import { LoginSchema } from "@/src/validation/LoginSchema";
 
 const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,13 +30,7 @@ const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
   const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.auth
   );
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
-
+  console.log(isAuthenticated, user);
   const handleSignIn = (
     values: { email: string; password: string },
     { resetForm }: FormikHelpers<{ email: string; password: string }>
@@ -64,7 +60,7 @@ const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.form}>
         <Formik
           initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
+          validationSchema={LoginSchema}
           onSubmit={(values, actions) => handleSignIn(values, actions)}
           validateOnMount
         >
@@ -101,7 +97,11 @@ const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
                 }
               />
               <TouchableOpacity
-                onPress={() => navigation.navigate("ForgotPassword")}
+                onPress={() => {
+                  navigation.navigate("ForgotPassword", {
+                    email: values.email,
+                  });
+                }}
               >
                 <Text style={styles.forgotPassword}>Forgot your password?</Text>
               </TouchableOpacity>
@@ -129,10 +129,10 @@ const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f8",
+    backgroundColor: colors.platinum,
   },
   header: {
-    backgroundColor: "#4a90e2",
+    backgroundColor: colors.yankeesBlue,
     paddingVertical: 80,
     justifyContent: "center",
     alignItems: "center",
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     textAlign: "right",
-    color: "#4a90e2",
+    color: colors.yankeesBlue,
     fontSize: 14,
     fontWeight: "500",
     marginVertical: 10,
@@ -159,12 +159,12 @@ const styles = StyleSheet.create({
   },
   createAccount: {
     textAlign: "center",
-    color: "#4a4a4a",
+    color: colors.darkCharcole,
     marginTop: 10,
     fontSize: 14,
   },
   link: {
-    color: "#4a90e2",
+    color: colors.yankeesBlue,
     fontWeight: "600",
   },
 });
