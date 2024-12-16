@@ -13,17 +13,14 @@ import Header from "@/src/components/Header";
 import InputField from "@/src/components/InputField";
 import Button from "@/src/components/Button";
 import { Formik, FormikHelpers } from "formik";
-import * as Yup from "yup";
+import { ForgotPaswordSchema } from "@/src/validation/ForgotPasswordSchema";
+import { colors } from "@/src/theme";
 
 const ForgotPasswordScreen: FC<StackScreenProps<"ForgotPassword">> = ({
   navigation,
+  route,
 }) => {
-  const validationSchema = Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-  });
-
+  const { email: loginMail } = route.params;
   const handleForgotPassword = (
     values: { email: string },
     { resetForm }: FormikHelpers<{ email: string }>
@@ -53,8 +50,8 @@ const ForgotPasswordScreen: FC<StackScreenProps<"ForgotPassword">> = ({
       </View>
       <ScrollView contentContainerStyle={styles.form}>
         <Formik
-          initialValues={{ email: "" }}
-          validationSchema={validationSchema}
+          initialValues={{ email: loginMail ?? "" }}
+          validationSchema={ForgotPaswordSchema}
           onSubmit={handleForgotPassword}
           validateOnMount
         >
@@ -99,9 +96,10 @@ const ForgotPasswordScreen: FC<StackScreenProps<"ForgotPassword">> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.platinum,
   },
   header: {
-    backgroundColor: "#4a90e2",
+    backgroundColor: colors.yankeesBlue,
     paddingVertical: 80,
     justifyContent: "center",
     alignItems: "center",
@@ -115,14 +113,16 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   bottomContainer: {
+    marginTop: "auto",
     paddingHorizontal: 20,
-    paddingBottom: 30,
+    paddingBottom: 20,
     justifyContent: "center",
   },
   backToLogin: {
     textAlign: "center",
-    color: "#4a4a4a",
-    marginTop: 15,
+    color: colors.yankeesBlue,
+    fontWeight: "600",
+    marginTop: 10,
   },
 });
 
