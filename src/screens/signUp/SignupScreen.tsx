@@ -1,116 +1,164 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   ScrollView,
   Alert,
-  TouchableOpacity,
 } from "react-native";
 import Header from "../../components/Header";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import {
-  faUser,
   faEyeSlash,
-  faEnvelope,
   faEye,
+  faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { StackScreenProps } from "../../navigation/AppNavigator";
+import { Formik, FormikHelpers } from "formik";
+import * as Yup from "yup";
 import Checkbox from "expo-checkbox";
 
-const SignupScreen: FC<StackScreenProps<"Signup">> = ({ navigation }) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+const SignupScreen: React.FC<StackScreenProps<"Signup">> = ({ navigation }) => {
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignUp = () => {
-    if (!email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill all the fields.");
-      return;
-    }
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .required("Confirm Password is required"),
+    agreeToTerms: Yup.boolean()
+      .oneOf([true], "You must accept the terms and conditions")
+      .required(),
+  });
 
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
-      return;
-    }
-
-    if (!agreeToTerms) {
-      Alert.alert("Error", "You must agree to the Terms & Conditions.");
-      return;
-    }
-
-    Alert.alert("Sign Up Successful", `Welcome, ${email}!`, [
-      {
-        text: "OK",
-        onPress: () => {
-          setEmail("");
-          setPassword("");
-          setConfirmPassword("");
-          setAgreeToTerms(false);
-          navigation.navigate("Login");
+  const handleSignUp = (
+    values: {
+      email: string;
+      password: string;
+      confirmPassword: string;
+      agreeToTerms: boolean;
+    },
+    {
+      resetForm,
+    }: FormikHelpers<{
+      email: string;
+      password: string;
+      confirmPassword: string;
+      agreeToTerms: boolean;
+    }>
+  ) => {
+    Alert.alert(
+      "Sign Up Successful",
+      `Welcome!\nEmail: ${values.email}\nPassword: ${values.password}`,
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            resetForm(), navigation.navigate("Login");
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Header title="Welcome!" subtitle="Create your account" />
+        <Header title="Create Account" subtitle="Sign up to get started" />
       </View>
       <ScrollView contentContainerStyle={styles.form}>
-        <InputField
-          placeholder="Email"
-          icon={faEnvelope}
-          onChangeText={setEmail}
-          value={email}
-          inputMode="email"
-        />
-        <InputField
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          onChangeText={setPassword}
-          value={password}
-          onIconPress={() => {
-            setShowPassword((show) => !show);
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+            confirmPassword: "",
+            agreeToTerms: false,
           }}
-          icon={showPassword ? faEye : faEyeSlash}
-        />
-        <InputField
-          placeholder="Confirm Password"
-          secureTextEntry={!showConfirmPassword}
-          onChangeText={setConfirmPassword}
-          value={confirmPassword}
-          onIconPress={() => {
-            setShowConfirmPassword((show) => !show);
-          }}
-          icon={showConfirmPassword ? faEye : faEyeSlash}
-        />
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            value={agreeToTerms}
-            onValueChange={setAgreeToTerms}
-            color={agreeToTerms ? "#007bff" : "#a9a9a9"}
-          />
-          <Text style={styles.checkboxLabel}>
-            I read and agree to the{" "}
-            <Text style={styles.link}>Terms & Conditions</Text>
-          </Text>
-        </View>
+          validationSchema={validationSchema}
+          onSubmit={(values, actions) => handleSignUp(values, actions)}
+          validateOnMount
+        >
+          {({
+            handleChange,
+            handleBlur,
+            values,
+            errors,
+            touched,
+            handleSubmit,
+            isValid,
+            isSubmitting,
+            setFieldValue,
+          }) => (
+            <>
+              <InputField
+                placeholder="Email"
+                icon={faEnvelope}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                inputMode="email"
+                value={values.email}
+                errorMessage={touched.email && errors.email ? errors.email : ""}
+              />
+              <InputField
+                placeholder="Password"
+                secureTextEntry={!showPassword}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+                onIconPress={() => setShowPassword(!showPassword)}
+                icon={showPassword ? faEye : faEyeSlash}
+                errorMessage={
+                  touched.password && errors.password ? errors.password : ""
+                }
+              />
+              <InputField
+                placeholder="Confirm Password"
+                secureTextEntry={!showPassword}
+                onChangeText={handleChange("confirmPassword")}
+                onBlur={handleBlur("confirmPassword")}
+                value={values.confirmPassword}
+                onIconPress={() => setShowPassword(!showPassword)}
+                icon={showPassword ? faEye : faEyeSlash}
+                errorMessage={
+                  touched.confirmPassword && errors.confirmPassword
+                    ? errors.confirmPassword
+                    : ""
+                }
+              />
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.agreeToTerms}
+                  onValueChange={(value) =>
+                    setFieldValue("agreeToTerms", value)
+                  }
+                  color={values.agreeToTerms ? "#007bff" : "#a9a9a9"}
+                />
+                <Text style={styles.checkboxLabel}>
+                  I agree to the terms and conditions
+                </Text>
+              </View>
+              <View style={styles.bottomContainer}>
+                <Button
+                  title="Sign Up"
+                  onPress={handleSubmit}
+                  disabled={!isValid || isSubmitting}
+                />
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text style={styles.createAccount}>
+                    Already have an account?{" "}
+                    <Text style={styles.link}>Log In</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </Formik>
       </ScrollView>
-      <View style={styles.bottomContainer}>
-        <Button title="Sign Up" onPress={handleSignUp} />
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.login}>
-            Already have an account? <Text style={styles.loginLink}>Login</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -138,27 +186,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
-    marginLeft: 4,
   },
   checkboxLabel: {
     marginLeft: 10,
-    color: "#4a4a4a",
-  },
-  link: {
-    color: "#4a90e2",
-    textDecorationLine: "underline",
+    fontSize: 14,
   },
   bottomContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    justifyContent: "center",
+    marginTop: "auto",
+    paddingHorizontal: 10,
+    paddingBottom: 20,
   },
-  login: {
+  createAccount: {
     textAlign: "center",
     color: "#4a4a4a",
-    marginTop: 15,
+    marginTop: 10,
+    fontSize: 14,
   },
-  loginLink: {
+  link: {
     color: "#4a90e2",
     fontWeight: "600",
   },

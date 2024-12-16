@@ -1,47 +1,47 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
-  Alert,
   ScrollView,
+  Alert,
 } from "react-native";
 import Header from "../../components/Header";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import {
-  faUser,
   faEyeSlash,
   faEye,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { StackScreenProps } from "../../navigation/AppNavigator";
+import { Formik, FormikHelpers } from "formik";
+import * as Yup from "yup";
 
-const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const handleSignIn = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please fill all the fields.");
-      return;
-    }
-    console.log("Email:", email);
-    console.log("Password:", password);
+const LoginScreen: React.FC<StackScreenProps<"Login">> = ({ navigation }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+  });
+
+  const handleSignIn = (
+    values: { email: string; password: string },
+    { resetForm }: FormikHelpers<{ email: string; password: string }>
+  ) => {
     Alert.alert(
-      "User Details",
-      `Email: ${email}\nPassword: ${password}`,
+      "Login Successful",
+      `Welcome!\nEmail: ${values.email}\nPassword: ${values.password}`,
       [
         {
           text: "OK",
-          onPress: () => {
-            setEmail("");
-            setPassword("");
-          },
+          onPress: () => resetForm(),
         },
-      ],
-      { cancelable: true }
+      ]
     );
   };
 
@@ -51,35 +51,66 @@ const LoginScreen: FC<StackScreenProps<"Login">> = ({ navigation }) => {
         <Header title="Welcome Back!" subtitle="Sign in to continue" />
       </View>
       <ScrollView contentContainerStyle={styles.form}>
-        <InputField
-          placeholder="Email"
-          icon={faEnvelope}
-          onChangeText={setEmail}
-          inputMode="email"
-          value={email}
-        />
-        <InputField
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          onChangeText={setPassword}
-          value={password}
-          onIconPress={() => {
-            setShowPassword((show: boolean) => !show);
-          }}
-          icon={showPassword ? faEye : faEyeSlash}
-        />
-        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-          <Text style={styles.forgotPassword}>Forgot your password?</Text>
-        </TouchableOpacity>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={validationSchema}
+          onSubmit={(values, actions) => handleSignIn(values, actions)}
+          validateOnMount
+        >
+          {({
+            handleChange,
+            handleBlur,
+            values,
+            errors,
+            touched,
+            handleSubmit,
+            isValid,
+            isSubmitting,
+          }) => (
+            <>
+              <InputField
+                placeholder="Email"
+                icon={faEnvelope}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                inputMode="email"
+                value={values.email}
+                errorMessage={touched.email && errors.email ? errors.email : ""}
+              />
+              <InputField
+                placeholder="Password"
+                secureTextEntry={!showPassword}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+                onIconPress={() => setShowPassword(!showPassword)}
+                icon={showPassword ? faEye : faEyeSlash}
+                errorMessage={
+                  touched.password && errors.password ? errors.password : ""
+                }
+              />
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ForgotPassword")}
+              >
+                <Text style={styles.forgotPassword}>Forgot your password?</Text>
+              </TouchableOpacity>
+              <View style={styles.bottomContainer}>
+                <Button
+                  title="Sign In"
+                  onPress={handleSubmit}
+                  disabled={!isValid || isSubmitting}
+                />
+                <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+                  <Text style={styles.createAccount}>
+                    Don’t have an account?{" "}
+                    <Text style={styles.link}>Create</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </Formik>
       </ScrollView>
-      <View style={styles.bottomContainer}>
-        <Button title="Sign In" onPress={handleSignIn} />
-        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text style={styles.createAccount}>
-            Don’t have an account? <Text style={styles.link}>Create</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -111,9 +142,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   bottomContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    justifyContent: "center",
+    marginTop: "auto",
+    paddingHorizontal: 10,
+    paddingBottom: 20,
   },
   createAccount: {
     textAlign: "center",
