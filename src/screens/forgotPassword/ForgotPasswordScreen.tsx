@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import {
   View,
   Text,
@@ -7,30 +7,35 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import { faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { StackScreenProps } from "@/src/navigation";
 import Header from "@/src/components/Header";
 import InputField from "@/src/components/InputField";
 import Button from "@/src/components/Button";
+import { Formik, FormikHelpers } from "formik";
+import * as Yup from "yup";
 
 const ForgotPasswordScreen: FC<StackScreenProps<"ForgotPassword">> = ({
   navigation,
 }) => {
-  const [email, setEmail] = useState<string>("");
-  const handleForgotPassword = () => {
-    if (!email) {
-      Alert.alert("Error", "Please enter your email.");
-      return;
-    }
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+  });
 
+  const handleForgotPassword = (
+    values: { email: string },
+    { resetForm }: FormikHelpers<{ email: string }>
+  ) => {
     Alert.alert(
       "Password Reset",
-      `A password reset link has been sent to ${email}.`,
+      `A password reset link has been sent to ${values.email}.`,
       [
         {
           text: "OK",
           onPress: () => {
-            setEmail("");
+            resetForm();
             navigation.navigate("Login");
           },
         },
@@ -47,20 +52,46 @@ const ForgotPasswordScreen: FC<StackScreenProps<"ForgotPassword">> = ({
         />
       </View>
       <ScrollView contentContainerStyle={styles.form}>
-        <InputField
-          placeholder="Email"
-          icon={faEnvelope}
-          onChangeText={setEmail}
-          value={email}
-          inputMode="email"
-        />
+        <Formik
+          initialValues={{ email: "" }}
+          validationSchema={validationSchema}
+          onSubmit={handleForgotPassword}
+          validateOnMount
+        >
+          {({
+            handleChange,
+            handleBlur,
+            values,
+            errors,
+            touched,
+            handleSubmit,
+            isValid,
+            isSubmitting,
+          }) => (
+            <>
+              <InputField
+                placeholder="Email"
+                icon={faEnvelope}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+                inputMode="email"
+                errorMessage={touched.email && errors.email ? errors.email : ""}
+              />
+              <View style={styles.bottomContainer}>
+                <Button
+                  title="Submit"
+                  onPress={handleSubmit}
+                  disabled={!isValid || isSubmitting}
+                />
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text style={styles.backToLogin}>Back to Login</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </Formik>
       </ScrollView>
-      <View style={styles.bottomContainer}>
-        <Button title="Forgot Password" onPress={handleForgotPassword} />
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.backToLogin}>Back to Login</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };

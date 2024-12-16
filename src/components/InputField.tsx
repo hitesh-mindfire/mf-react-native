@@ -3,6 +3,7 @@ import {
   View,
   TextInput,
   StyleSheet,
+  Text,
   TextInputProps,
   TouchableOpacity,
 } from "react-native";
@@ -16,6 +17,7 @@ interface InputFieldProps extends TextInputProps {
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   onIconPress?: () => void;
+  errorMessage?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -25,30 +27,44 @@ const InputField: React.FC<InputFieldProps> = ({
   onIconPress,
   value,
   onChangeText,
+  errorMessage,
   ...props
 }) => {
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        secureTextEntry={secureTextEntry}
-        placeholderTextColor="#a9a9a9"
-        value={value}
-        onChangeText={onChangeText}
-        {...props}
-      />
-      {icon && (
-        <TouchableOpacity onPress={onIconPress} style={styles.iconContainer}>
-          <FontAwesomeIcon icon={icon} size={20} color="grey" />
-        </TouchableOpacity>
-      )}
+      <View
+        style={[
+          styles.inputContainer,
+          errorMessage ? styles.errorBorder : null,
+        ]}
+      >
+        <TextInput
+          style={styles.input}
+          placeholder={placeholder}
+          secureTextEntry={secureTextEntry}
+          placeholderTextColor="#a9a9a9"
+          value={value}
+          onChangeText={onChangeText}
+          {...props}
+        />
+        {icon && (
+          <TouchableOpacity onPress={onIconPress} style={styles.iconContainer}>
+            <FontAwesomeIcon icon={icon} size={20} color="grey" />
+          </TouchableOpacity>
+        )}
+      </View>
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    marginVertical: 10,
+  },
+  inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
@@ -56,7 +72,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 15,
     paddingVertical: 8,
-    marginVertical: 10,
     backgroundColor: "#fff",
     shadowRadius: 8,
     elevation: 3,
@@ -69,6 +84,14 @@ const styles = StyleSheet.create({
   iconContainer: {
     paddingLeft: 10,
   },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+    marginLeft: 10,
+  },
+  errorBorder: {
+    borderColor: "red",
+  },
 });
-
 export default InputField;
